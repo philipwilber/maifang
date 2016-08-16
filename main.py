@@ -23,6 +23,11 @@ def get_chengjiao():
     data1 = tree.xpath('//div[@class="title"]/a')
     data2 = tree.xpath('//div[@class="totalPrice"]/span')
     data3 = tree.xpath('//div[@class="unitPrice"]/span')
+    data4 = tree.xpath('//div[@class="title"]/a/@href')
+    data5 = tree.xpath('//div[@class="houseInfo"]')
+    data6 = tree.xpath('//div[@class="positionInfo"]')
+    data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
+    data8 = tree.xpath('//div[@class="dealDate"]')
     for x in range(len(data1)):
         '''
             data1: 小区名 x室y厅 面积
@@ -33,31 +38,24 @@ def get_chengjiao():
 
             '''
         titles = data1.text.split(' ')
-        unit_price = get_re_digits(Cons.ERSHOU, data3[x].text)
         url = get_re_digits(Cons.ERSHOU, data4[x])
-        visit = get_re_digits(Cons.ERSHOU, arry2[1])
+        houseInfo = data5[x].text.split(' | ')
+
 
         dic = {'name': titles[0],
                'total_price': data2[x].text,
-               'unit_price': data3,
+               'unit_price': data3[x].text,
                'url': url,
                'bedroom': titles[1][0],
                'livingroom': titles[1][2],
                'area': titles[2][:-2],
-               'toward': arry1[3],
-               'fitment': arry1[4],
-               'follows': arry2[0][:-3],
-               'visit_time': visit,
-               'pub_date': arry2[2],
+               'toward': houseInfo[0],
+               'fitment': houseInfo[1],
+               'floor': data6[x].text[0],
+               'deal_date': data8[x].text
                }
         print(dic)
         print('---------------------------')
-
-        # titles = item.text.split(' ')
-        # print('小区:%s' % titles[0])
-        # print('室:%s' % titles[1][0])
-        # print('厅:%s' % titles[1][2])
-        # print('面积:%s' % titles[2][:1])
 
 
 
@@ -119,5 +117,5 @@ def get_re_digits(pre_str, target_str):
 
 
 if __name__ == '__main__':
-    # get_chengjiao()
-    get_ershou()
+    get_chengjiao()
+    #get_ershou()
