@@ -24,10 +24,10 @@ def get_chengjiao():
     data2 = tree.xpath('//div[@class="totalPrice"]/span')
     data3 = tree.xpath('//div[@class="unitPrice"]/span')
     data4 = tree.xpath('//div[@class="title"]/a/@href')
-    data5 = tree.xpath('//div[@class="houseInfo"]')
-    data6 = tree.xpath('//div[@class="positionInfo"]')
+    data5 = tree.xpath('//div[@class="houseInfo"]/text()')
+    data6 = tree.xpath('//div[@class="positionInfo"]/text()')
     data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
-    data8 = tree.xpath('//div[@class="dealDate"]')
+    data8 = tree.xpath('//div[@class="dealDate"]/text()')
     for x in range(len(data1)):
         '''
             data1: 小区名 x室y厅 面积
@@ -37,9 +37,9 @@ def get_chengjiao():
             data5: 关注 / 看房 / 发布日期
 
             '''
-        titles = data1.text.split(' ')
-        url = get_re_digits(Cons.ERSHOU, data4[x])
-        houseInfo = data5[x].text.split(' | ')
+        titles = data1[x].text.split(' ')
+        url = get_re_digits(Cons.CHENGJIAO, data4[x])
+        houseInfo = data5[x].split(' | ')
 
 
         dic = {'name': titles[0],
@@ -51,8 +51,8 @@ def get_chengjiao():
                'area': titles[2][:-2],
                'toward': houseInfo[0],
                'fitment': houseInfo[1],
-               'floor': data6[x].text[0],
-               'deal_date': data8[x].text
+               'floor': data6[x][0],
+               'deal_date': data8[x]
                }
         print(dic)
         print('---------------------------')
