@@ -3,8 +3,8 @@ from lxml import etree
 import re
 import time
 
-import Cons
-from DB import DBProvider
+from consts import const
+from db import DBProvider
 
 dbProvider = DBProvider()
 
@@ -12,14 +12,14 @@ def get_tree(url):
     header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) '
                             'Chrome/51.0.2704.103 Safari/537.36'}
     req = urllib.request.Request(url=url, headers=header)
-    page = urllib.request.urlopen(req).read().decode('UTF-8')
+    page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
     # print(page)
     tree = etree.HTML(page)
     return tree
 
 
 def get_chengjiao():
-    tree = get_tree(Cons.URL_CHENGJIAO)
+    tree = get_tree(const.URL_CHENGJIAO)
     data1 = tree.xpath('//div[@class="title"]/a')
     data2 = tree.xpath('//div[@class="totalPrice"]/span')
     data3 = tree.xpath('//div[@class="unitPrice"]/span')
@@ -38,7 +38,7 @@ def get_chengjiao():
 
             '''
         titles = data1[x].text.split(' ')
-        url = get_re_digits(Cons.CHENGJIAO, data4[x])
+        url = get_re_digits(const.CHENGJIAO, data4[x])
         houseInfo = data5[x].split(' | ')
 
 
@@ -64,7 +64,7 @@ def get_ershou():
     num = 0
     dbProvider.db_conn()
     for i in range(1,100):
-        tree = get_tree(Cons.URL_ERSHOU + '/pg' + str(i) + '/')
+        tree = get_tree(const.URL_ERSHOU + '/pg' + str(i) + '/')
         data1 = tree.xpath('//div[@class="houseInfo"]/a')
         data2 = tree.xpath('//div[@class="totalPrice"]/span')
         data3 = tree.xpath('//div[@class="unitPrice"]/span')
@@ -81,8 +81,8 @@ def get_ershou():
             '''
             arry1 = data1[x].tail.split(' | ')
             arry2 = data5[x].tail.split(' / ')
-            unit_price = get_re_digits(Cons.UNIT_PRICE, data3[x].text)
-            url = get_re_digits(Cons.ERSHOU, data4[x])
+            unit_price = get_re_digits(const.UNIT_PRICE, data3[x].text)
+            url = get_re_digits(const.ERSHOU, data4[x])
 
             dic = {'name': data1[x].text,
                    'total_price': data2[x].text,
@@ -117,5 +117,6 @@ def get_re_digits(pre_str, target_str):
 
 
 if __name__ == '__main__':
+
     get_chengjiao()
     #get_ershou()
