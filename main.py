@@ -18,8 +18,8 @@ def get_tree(url):
     return tree
 
 
-def get_chengjiao():
-    tree = get_tree(const.URL_CHENGJIAO)
+def get_deal():
+    tree = get_tree(const.URL_DEAL)
     data1 = tree.xpath('//div[@class="title"]/a')
     data2 = tree.xpath('//div[@class="totalPrice"]/span')
     data3 = tree.xpath('//div[@class="unitPrice"]/span')
@@ -38,7 +38,7 @@ def get_chengjiao():
 
             '''
         titles = data1[x].text.split(' ')
-        url = get_re_digits(const.CHENGJIAO, data4[x])
+        url = get_re_digits(const.DEAL, data4[x])
         houseInfo = data5[x].split(' | ')
 
 
@@ -118,5 +118,5 @@ def get_re_digits(pre_str, target_str):
 
 if __name__ == '__main__':
 
-    get_chengjiao()
-    #get_ershou()
+    get_deal()
+    get_ershou()
