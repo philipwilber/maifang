@@ -1,7 +1,6 @@
 import urllib.request
 from lxml import etree
 import re
-import time
 
 from consts import const
 from db import DBProvider
@@ -9,8 +8,10 @@ from db import DBProvider
 dbProvider = DBProvider()
 
 def get_tree(url):
-    header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) '
-                            'Chrome/51.0.2704.103 Safari/537.36'}
+
+
+    header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) '
+                            'Chrome/52.0.2743.116 Safari/537.36'}
     req = urllib.request.Request(url=url, headers=header)
     page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
     # print(page)
@@ -19,52 +20,56 @@ def get_tree(url):
 
 
 def get_deal():
-    tree = get_tree(const.URL_DEAL)
-    data1 = tree.xpath('//div[@class="title"]/a')
-    data2 = tree.xpath('//div[@class="totalPrice"]/span')
-    data3 = tree.xpath('//div[@class="unitPrice"]/span')
-    data4 = tree.xpath('//div[@class="title"]/a/@href')
-    data5 = tree.xpath('//div[@class="houseInfo"]/text()')
-    data6 = tree.xpath('//div[@class="positionInfo"]/text()')
-    data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
-    data8 = tree.xpath('//div[@class="dealDate"]/text()')
-    for x in range(len(data1)):
-        '''
-            data1: 小区名 x室y厅 面积
-            data2: 总价
-            data3: 单价
-            data4: url
-            data5: 关注 / 看房 / 发布日期
-
+    num = 0
+    dbProvider.db_conn()
+    for i in range(1, 100):
+        print(const.URL_DEAL + 'pg' + str(i) + '/')
+        tree = get_tree(const.URL_DEAL + 'pg' + str(i) + '/')
+        data1 = tree.xpath('//div[@class="title"]/a')
+        data2 = tree.xpath('//div[@class="totalPrice"]/span')
+        data3 = tree.xpath('//div[@class="unitPrice"]/span')
+        data4 = tree.xpath('//div[@class="title"]/a/@href')
+        data5 = tree.xpath('//div[@class="houseInfo"]/text()')
+        data6 = tree.xpath('//div[@class="positionInfo"]/text()')
+        # data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
+        data8 = tree.xpath('//div[@class="dealDate"]/text()')
+        for x in range(len(data1)):
             '''
-        titles = data1[x].text.split(' ')
-        url = get_re_digits(const.DEAL, data4[x])
-        houseInfo = data5[x].split(' | ')
+                data1: 小区名 x室y厅 面积
+                data2: 总价
+                data3: 单价
+                data4: url
+                data5: 关注 / 看房 / 发布日期
 
+                '''
+            titles = data1[x].text.split(' ')
+            url = get_re_digits(const.DEAL, data4[x])
+            houseInfo = data5[x].split(' | ')
 
-        dic = {'name': titles[0],
-               'total_price': data2[x].text,
-               'unit_price': data3[x].text,
-               'url': url,
-               'bedroom': titles[1][0],
-               'livingroom': titles[1][2],
-               'area': titles[2][:-2],
-               'toward': houseInfo[0],
-               'fitment': houseInfo[1],
-               'floor': data6[x][0],
-               'deal_date': data8[x]
-               }
-        print(dic)
-        print('---------------------------')
+            dic = {'name': titles[0],
+                   'total_price': data2[x].text,
+                   'unit_price': data3[x].text,
+                   'url': url,
+                   'bedroom': titles[1][0],
+                   'livingroom': titles[1][2],
+                   'area': titles[2][:-2],
+                   'toward': houseInfo[0],
+                   'fitment': houseInfo[1],
+                   'floor': data6[x][0],
+                   'deal_date': data8[x]
+                   }
+            dbProvider.add_deal(dic)
+            num = num + 1
+            print('已输入成交记录: ' + str(num))
+    dbProvider.db_close()
 
 
 
 def get_ershou():
-    list = []
     num = 0
     dbProvider.db_conn()
     for i in range(1,100):
-        tree = get_tree(const.URL_ERSHOU + '/pg' + str(i) + '/')
+        tree = get_tree(const.URL_ERSHOU + 'pg' + str(i) + '/')
         data1 = tree.xpath('//div[@class="houseInfo"]/a')
         data2 = tree.xpath('//div[@class="totalPrice"]/span')
         data3 = tree.xpath('//div[@class="unitPrice"]/span')
@@ -100,11 +105,10 @@ def get_ershou():
                    }
             dbProvider.add_ershou(dic)
             num=num+1
-            print('input: ' + str(num))
+            print('已输入二手房记录: ' + str(num))
             # list.append(dic)
     # print(len(list))
     dbProvider.db_close()
-
 
 
 def get_re_digits(pre_str, target_str):

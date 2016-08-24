@@ -1,10 +1,10 @@
 import mysql.connector
-import Cons
+from consts import const
 
 class DBProvider(object):
 
     def db_conn(self):
-        self.conn = mysql.connector.connect(user=Cons.DB_USER, password=Cons.DB_PASSWORD, database=Cons.DB_LIANJIA)
+        self.conn = mysql.connector.connect(user=const.DB_USER, password=const.DB_PASSWORD, database=const.DB_LIANJIA)
         return self.conn
 
     def db_close(self):
@@ -35,6 +35,24 @@ class DBProvider(object):
                  '%s','%s','%s','%s','%s','%s')''' % (data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
                     data['livingroom'], data['area'], data['toward'], data['fitment'],
                     data['follows'], data['visit_times'], data['pub_date'], data['remarks'])
+            cursor.execute(sql)
+            self.conn.commit()
+            cursor.close()
+        except mysql.connector.Error(''):
+            self.conn.rollback()
+
+    def add_deal(self, data):
+        try:
+            if (self.conn is not None):
+                cursor = self.conn.cursor()
+            else:
+                raise mysql.connector.Error('Connection Error')
+
+            sql = '''insert into TB_DEAL (name, date, total_price, unit_price, url, bedroom, livingroom, area,
+                 toward, fitment, floor, deal_date) values ('%s', NOW(),'%s','%s', '%s','%s','%s','%s',
+                 '%s','%s','%s', '%s')''' % (
+            data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
+            data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'], data['deal_date'])
             cursor.execute(sql)
             self.conn.commit()
             cursor.close()
