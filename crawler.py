@@ -9,9 +9,7 @@ __dbProvider = DBProvider()
 
 
 def get_tree(url):
-    header = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) '
-                            'Chrome/52.0.2743.116 Safari/537.36'}
-    req = urllib.request.Request(url=url, headers=header)
+    req = urllib.request.Request(url=url, headers=const.HEADER)
     page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
     # print(page)
     tree = etree.HTML(page)
@@ -48,7 +46,7 @@ def get_deal():
             dic = {'name': titles[0],
                    'total_price': data2[x].text,
                    'unit_price': data3[x].text,
-                   'url': url,
+                   'url_id': url,
                    'bedroom': titles[1][0],
                    'livingroom': titles[1][2],
                    'area': titles[2][:-2],
@@ -60,13 +58,14 @@ def get_deal():
             __dbProvider.add_deal(dic)
             num += 1
             print('已输入成交记录: ' + str(num))
-        __dbProvider.db_close()
+    __dbProvider.db_close()
 
 
 def get_ershou():
     num = 0
     __dbProvider.db_conn()
     for i in range(1, 100):
+        print(const.URL_ERSHOU + 'pg' + str(i) + '/')
         tree = get_tree(const.URL_ERSHOU + 'pg' + str(i) + '/')
         data1 = tree.xpath('//div[@class="houseInfo"]/a')
         data2 = tree.xpath('//div[@class="totalPrice"]/span')
@@ -90,7 +89,7 @@ def get_ershou():
             dic = {'name': data1[x].text,
                    'total_price': data2[x].text,
                    'unit_price': unit_price,
-                   'url': url,
+                   'url_id': url,
                    'bedroom': arry1[1][0],
                    'livingroom': arry1[1][2],
                    'area': arry1[2][:-2],
@@ -106,7 +105,7 @@ def get_ershou():
             print('已输入二手房记录: ' + str(num))
             # list.append(dic)
             # print(len(list))
-        __dbProvider.db_close()
+    __dbProvider.db_close()
 
 
 def get_re_digits(pre_str, target_str):

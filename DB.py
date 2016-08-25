@@ -31,10 +31,10 @@ class DBProvider(object):
             else:
                 raise mysql.connector.Error('Connection Error')
 
-            sql = '''insert into TB_ERSHOU (name, date, total_price, unit_price, url, bedroom, livingroom, area,
-                 toward, fitment, follows, visit_times, pub_date, remarks) values ('%s', NOW(),'%s','%s', '%s','%s','%s','%s',
-                 '%s','%s','%s','%s','%s','%s')''' % (
-                data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
+            sql = '''insert into TB_ERSHOU (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
+                 toward, fitment, follows, visit_times, pub_date, remarks) values ('%s','%s', NOW(),'%s','%s','%s','%s',
+                 '%s','%s','%s','%s','%s','%s','%s')''' % (
+                data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],
                 data['livingroom'], data['area'], data['toward'], data['fitment'],
                 data['follows'], data['visit_times'], data['pub_date'], data['remarks'])
             cursor.execute(sql)
@@ -50,10 +50,10 @@ class DBProvider(object):
             else:
                 raise mysql.connector.Error('Connection Error')
 
-            sql = '''insert into TB_DEAL (name, date, total_price, unit_price, url, bedroom, livingroom, area,
-                 toward, fitment, floor, deal_date) values ('%s', NOW(),'%s','%s', '%s','%s','%s','%s',
+            sql = '''insert into TB_DEAL (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
+                 toward, fitment, floor, deal_date) values ('%s', '%s', NOW(),'%s','%s','%s','%s','%s',
                  '%s','%s','%s', '%s')''' % (
-                data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
+                data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],
                 data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'], data['deal_date'])
             cursor.execute(sql)
             self.conn.commit()
