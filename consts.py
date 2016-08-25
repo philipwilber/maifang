@@ -19,10 +19,11 @@ const.ENCODE_FORM = 'UTF-8'
 const.HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 '
                                    '(KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
 
+const.DISTRICTS = ['luohu', 'futian', 'nanshan', 'yantian', 'baoan', 'longgang', 'longhuaxinqu', 'guangmingxinqu',
+                  'pingshanxinqu', 'dapengxinqu']
 const.ERSHOU = 'ershoufang'
 const.URL_ERSHOU = 'http://sz.lianjia.com/ershoufang/'
 const.TB_ERSHOU = 'TB_ERSHOU'
-
 
 const.DEAL = 'chengjiao'
 const.URL_DEAL = 'http://sz.lianjia.com/chengjiao/'

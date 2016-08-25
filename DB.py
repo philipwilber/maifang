@@ -31,12 +31,12 @@ class DBProvider(object):
             else:
                 raise mysql.connector.Error('Connection Error')
 
-            sql = '''insert into TB_ERSHOU (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
-                 toward, fitment, follows, visit_times, pub_date, remarks) values ('%s','%s', NOW(),'%s','%s','%s','%s',
-                 '%s','%s','%s','%s','%s','%s','%s')''' % (
+            sql = '''insert ignore into TB_ERSHOU (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
+                 toward, fitment, follows, visit_times, pub_date, district, remarks) values ('%s','%s', NOW(),'%s','%s','%s','%s',
+                 '%s','%s','%s','%s','%s','%s','%s','%s')''' % (
                 data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],
                 data['livingroom'], data['area'], data['toward'], data['fitment'],
-                data['follows'], data['visit_times'], data['pub_date'], data['remarks'])
+                data['follows'], data['visit_times'], data['pub_date'], data['district'], data['remarks'])
             cursor.execute(sql)
             self.conn.commit()
             cursor.close()
@@ -50,7 +50,7 @@ class DBProvider(object):
             else:
                 raise mysql.connector.Error('Connection Error')
 
-            sql = '''insert into TB_DEAL (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
+            sql = '''insert ignore into TB_DEAL (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
                  toward, fitment, floor, deal_date) values ('%s', '%s', NOW(),'%s','%s','%s','%s','%s',
                  '%s','%s','%s', '%s')''' % (
                 data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],

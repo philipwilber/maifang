@@ -11,7 +11,6 @@ __dbProvider = DBProvider()
 def get_tree(url):
     req = urllib.request.Request(url=url, headers=const.HEADER)
     page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
-    # print(page)
     tree = etree.HTML(page)
     return tree
 
@@ -64,47 +63,55 @@ def get_deal():
 def get_ershou():
     num = 0
     __dbProvider.db_conn()
-    for i in range(1, 100):
-        print(const.URL_ERSHOU + 'pg' + str(i) + '/')
-        tree = get_tree(const.URL_ERSHOU + 'pg' + str(i) + '/')
-        data1 = tree.xpath('//div[@class="houseInfo"]/a')
-        data2 = tree.xpath('//div[@class="totalPrice"]/span')
-        data3 = tree.xpath('//div[@class="unitPrice"]/span')
-        data4 = tree.xpath('//div[@class="title"]/a/@href')
-        data5 = tree.xpath('//div[@class="followInfo"]/span')
-        for x in range(len(data1)):
-            '''
-            data1: 小区名 | x室y厅 | 面积 | 朝向 | 装修
-            data2: 总价
-            data3: 单价
-            data4: url
-            data5: 关注 / 看房 / 发布日期
+    for district in const.DISTRICTS:
+        tree = get_tree(const.URL_ERSHOU + district + '/')
+        page_tree = tree.xpath('//div[@class="page-box house-lst-page-box"]/@page-data')[0]
+        page = get_re_digits('"totalPage":', page_tree)
+        for i in range(1, int(page)):
+            print(const.URL_ERSHOU + district + '/' + 'pg' + str(i) + '/')
+            tree = get_tree(const.URL_ERSHOU + district + '/' + 'pg' + str(i) + '/')
+            data1 = tree.xpath('//div[@class="houseInfo"]/a')
+            data2 = tree.xpath('//div[@class="totalPrice"]/span')
+            data3 = tree.xpath('//div[@class="unitPrice"]/span')
+            data4 = tree.xpath('//div[@class="title"]/a/@href')
+            data5 = tree.xpath('//div[@class="followInfo"]/span')
+            for x in range(len(data1)):
+                '''
+                data1: 小区名 | x室y厅 | 面积 | 朝向 | 装修
+                data2: 总价
+                data3: 单价
+                data4: url
+                data5: 关注 / 看房 / 发布日期
 
-            '''
-            arry1 = data1[x].tail.split(' | ')
-            arry2 = data5[x].tail.split(' / ')
-            unit_price = get_re_digits(const.UNIT_PRICE, data3[x].text)
-            url = get_re_digits(const.ERSHOU, data4[x])
+                '''
+                arry1 = data1[x].tail.split(' | ')
+                arry2 = data5[x].tail.split(' / ')
+                unit_price = get_re_digits(const.UNIT_PRICE, data3[x].text)
+                url = get_re_digits(const.ERSHOU, data4[x])
 
-            dic = {'name': data1[x].text,
-                   'total_price': data2[x].text,
-                   'unit_price': unit_price,
-                   'url_id': url,
-                   'bedroom': arry1[1][0],
-                   'livingroom': arry1[1][2],
-                   'area': arry1[2][:-2],
-                   'toward': arry1[3],
-                   'fitment': arry1[4],
-                   'follows': arry2[0][:-3],
-                   'visit_times': arry2[1][1:-3],
-                   'pub_date': arry2[2],
-                   'remarks': ''
-                   }
-            __dbProvider.add_ershou(dic)
-            num += 1
-            print('已输入二手房记录: ' + str(num))
-            # list.append(dic)
-            # print(len(list))
+                dic = {'name': data1[x].text,
+                       'total_price': data2[x].text,
+                       'unit_price': unit_price,
+                       'url_id': url,
+                       'bedroom': arry1[1][0],
+                       'livingroom': arry1[1][2],
+                       'area': arry1[2][:-2],
+                       'toward': arry1[3],
+                       'fitment': arry1[4],
+                       'follows': arry2[0][:-3],
+                       'visit_times': arry2[1][1:-3],
+                       'pub_date': arry2[2],
+                       'district': district,
+                       'remarks': ''
+                       }
+                __dbProvider.add_ershou(dic)
+                num += 1
+                print('已输入二手房记录: ' + str(num))
+                # list.append(dic)
+                # print(len(list))
+
+
+
     __dbProvider.db_close()
 
 
