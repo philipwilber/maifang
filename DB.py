@@ -1,6 +1,7 @@
 import mysql.connector
 from consts import const
 
+
 class DBProvider(object):
 
     def db_conn(self):
@@ -8,12 +9,12 @@ class DBProvider(object):
         return self.conn
 
     def db_close(self):
-        if (self.conn != None):
+        if (self.conn is not None):
             self.conn.close()
 
     def exec_sql(self, sql):
         try:
-            if (self.conn != None):
+            if (self.conn is not None):
                 cursor = self.conn.cursor()
             else:
                 raise mysql.connector.Error('Connection Error')
@@ -32,9 +33,10 @@ class DBProvider(object):
 
             sql = '''insert into TB_ERSHOU (name, date, total_price, unit_price, url, bedroom, livingroom, area,
                  toward, fitment, follows, visit_times, pub_date, remarks) values ('%s', NOW(),'%s','%s', '%s','%s','%s','%s',
-                 '%s','%s','%s','%s','%s','%s')''' % (data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
-                    data['livingroom'], data['area'], data['toward'], data['fitment'],
-                    data['follows'], data['visit_times'], data['pub_date'], data['remarks'])
+                 '%s','%s','%s','%s','%s','%s')''' % (
+                data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
+                data['livingroom'], data['area'], data['toward'], data['fitment'],
+                data['follows'], data['visit_times'], data['pub_date'], data['remarks'])
             cursor.execute(sql)
             self.conn.commit()
             cursor.close()
@@ -51,8 +53,8 @@ class DBProvider(object):
             sql = '''insert into TB_DEAL (name, date, total_price, unit_price, url, bedroom, livingroom, area,
                  toward, fitment, floor, deal_date) values ('%s', NOW(),'%s','%s', '%s','%s','%s','%s',
                  '%s','%s','%s', '%s')''' % (
-            data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
-            data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'], data['deal_date'])
+                data['name'], data['total_price'], data['unit_price'], data['url'], data['bedroom'],
+                data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'], data['deal_date'])
             cursor.execute(sql)
             self.conn.commit()
             cursor.close()
