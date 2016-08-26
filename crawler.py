@@ -1,4 +1,5 @@
 import urllib.request
+import requests
 from lxml import etree
 import re
 
@@ -9,54 +10,62 @@ __dbProvider = DBProvider()
 
 
 def get_tree(url):
-    req = urllib.request.Request(url=url, headers=const.HEADER)
-    page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
-    tree = etree.HTML(page)
+    # req = urllib.request.Request(url=url, headers=const.HEADER)
+    # page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
+    page = requests.get(url, headers=const.HEADER)
+    page.encoding = const.ENCODE_FORM
+    tree = etree.HTML(page.text)
     return tree
 
 
 def get_deal():
     num = 0
     __dbProvider.db_conn()
-    for i in range(1, 100):
-        print(const.URL_DEAL + 'pg' + str(i) + '/')
-        tree = get_tree(const.URL_DEAL + 'pg' + str(i) + '/')
-        data1 = tree.xpath('//div[@class="title"]/a')
-        data2 = tree.xpath('//div[@class="totalPrice"]/span')
-        data3 = tree.xpath('//div[@class="unitPrice"]/span')
-        data4 = tree.xpath('//div[@class="title"]/a/@href')
-        data5 = tree.xpath('//div[@class="houseInfo"]/text()')
-        data6 = tree.xpath('//div[@class="positionInfo"]/text()')
-        # data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
-        data8 = tree.xpath('//div[@class="dealDate"]/text()')
-        for x in range(len(data1)):
-            '''
-                data1: 小区名 x室y厅 面积
-                data2: 总价
-                data3: 单价
-                data4: url
-                data5: 关注 / 看房 / 发布日期
-
+    for district in const.DISTRICTS:
+        tree = get_tree(const.URL_DEAL + district + '/')
+        page_tree = tree.xpath('//div[@class="page-box house-lst-page-box"]/@page-data')[0]
+        page = get_re_digits('"totalPage":', page_tree)
+        for i in range(1, int(page)):
+            print(const.URL_DEAL + 'pg' + str(i) + '/')
+            tree = get_tree(const.URL_DEAL + 'pg' + str(i) + '/')
+            data1 = tree.xpath('//div[@class="title"]/a')
+            data2 = tree.xpath('//div[@class="totalPrice"]/span')
+            data3 = tree.xpath('//div[@class="unitPrice"]/span')
+            data4 = tree.xpath('//div[@class="title"]/a/@href')
+            data5 = tree.xpath('//div[@class="houseInfo"]/text()')
+            data6 = tree.xpath('//div[@class="positionInfo"]/text()')
+            # data7 = tree.xpath('//span[@class="dealHouseTxt"]/span')
+            data8 = tree.xpath('//div[@class="dealDate"]/text()')
+            for x in range(len(data1)):
                 '''
-            titles = data1[x].text.split(' ')
-            url = get_re_digits(const.DEAL, data4[x])
-            houseInfo = data5[x].split(' | ')
+                    data1: 小区名 x室y厅 面积
+                    data2: 总价
+                    data3: 单价
+                    data4: url
+                    data5: 关注 / 看房 / 发布日期
 
-            dic = {'name': titles[0],
-                   'total_price': data2[x].text,
-                   'unit_price': data3[x].text,
-                   'url_id': url,
-                   'bedroom': titles[1][0],
-                   'livingroom': titles[1][2],
-                   'area': titles[2][:-2],
-                   'toward': houseInfo[0],
-                   'fitment': houseInfo[1],
-                   'floor': data6[x][0],
-                   'deal_date': data8[x]
-                   }
-            __dbProvider.add_deal(dic)
-            num += 1
-            print('已输入成交记录: ' + str(num))
+                    '''
+                titles = data1[x].text.split(' ')
+                url = get_re_digits(const.DEAL, data4[x])
+                houseInfo = data5[x].split(' | ')
+
+                dic = {'name': titles[0],
+                       'total_price': data2[x].text,
+                       'unit_price': data3[x].text,
+                       'url_id': url,
+                       'bedroom': titles[1][0],
+                       'livingroom': titles[1][2],
+                       'area': titles[2][:-2],
+                       'toward': houseInfo[0],
+                       'fitment': houseInfo[1],
+                       'floor': data6[x][0],
+                       'deal_date': data8[x]
+                       }
+                __dbProvider.add_deal(dic)
+                num += 1
+                print('已输入成交记录: ' + str(num))
+
+
     __dbProvider.db_close()
 
 
@@ -116,7 +125,7 @@ def get_ershou():
 
 
 def get_re_digits(pre_str, target_str):
-    search_data = re.compile(r'' + pre_str + '\/*(\d+)')
+    search_data = re.compile(r'' + pre_str + '*(\d+)')
     value_search = search_data.search(target_str)
     value = ''
     if value_search is not None:

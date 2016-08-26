@@ -52,9 +52,10 @@ class DBProvider(object):
 
             sql = '''insert ignore into TB_DEAL (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
                  toward, fitment, floor, deal_date) values ('%s', '%s', NOW(),'%s','%s','%s','%s','%s',
-                 '%s','%s','%s', '%s')''' % (
+                 '%s','%s','%s','%s','%s')''' % (
                 data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],
-                data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'], data['deal_date'])
+                data['livingroom'], data['area'], data['toward'], data['fitment'], data['floor'],
+                data['deal_date'], data['district'])
             cursor.execute(sql)
             self.conn.commit()
             cursor.close()
