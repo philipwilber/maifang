@@ -31,10 +31,16 @@ class DBProvider(object):
             else:
                 raise mysql.connector.Error('Connection Error')
 
-            sql = '''insert ignore into TB_ERSHOU (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
-                 toward, fitment, follows, visit_times, pub_date, district, remarks) values ('%s','%s', NOW(),'%s','%s','%s','%s',
-                 '%s','%s','%s','%s','%s','%s','%s','%s')''' % (
+            sql = '''INSERT INTO TB_ERSHOU (url_id, name, date, total_price, unit_price, bedroom, livingroom, area,
+                 toward, fitment, follows, visit_times, pub_date, district, remarks) VALUES ('%s','%s', NOW(),'%s','%s','%s','%s',
+                 '%s','%s','%s','%s','%s','%s','%s','%s') ON DUPLICATE KEY UPDATE
+                 name='%s', date=NOW(), total_price='%s', unit_price='%s', bedroom='%s',
+                 livingroom='%s', area='%s', toward='%s', fitment='%s', follows='%s',
+                visit_times='%s', pub_date='%s', district='%s', remarks='%s' ''' % (
                 data['url_id'], data['name'], data['total_price'], data['unit_price'], data['bedroom'],
+                data['livingroom'], data['area'], data['toward'], data['fitment'],
+                data['follows'], data['visit_times'], data['pub_date'], data['district'], data['remarks'],
+                data['name'], data['total_price'], data['unit_price'], data['bedroom'],
                 data['livingroom'], data['area'], data['toward'], data['fitment'],
                 data['follows'], data['visit_times'], data['pub_date'], data['district'], data['remarks'])
             cursor.execute(sql)

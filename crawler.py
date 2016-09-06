@@ -72,13 +72,13 @@ def get_deal():
 def get_ershou():
     num = 0
     __dbProvider.db_conn()
-    for district in const.DISTRICTS:
-        tree = get_tree(const.URL_ERSHOU + district + '/')
+    for (k,v) in const.DISTRICTS.items():
+        tree = get_tree(const.URL_ERSHOU + v + '/')
         page_tree = tree.xpath('//div[@class="page-box house-lst-page-box"]/@page-data')[0]
         page = get_re_digits('"totalPage":', page_tree)
         for i in range(1, int(page)):
-            print(const.URL_ERSHOU + district + '/' + 'pg' + str(i) + '/')
-            tree = get_tree(const.URL_ERSHOU + district + '/' + 'pg' + str(i) + '/')
+            print(const.URL_ERSHOU + v + '/' + 'pg' + str(i) + '/')
+            tree = get_tree(const.URL_ERSHOU + v + '/' + 'pg' + str(i) + '/')
             data1 = tree.xpath('//div[@class="houseInfo"]/a')
             data2 = tree.xpath('//div[@class="totalPrice"]/span')
             data3 = tree.xpath('//div[@class="unitPrice"]/span')
@@ -110,7 +110,7 @@ def get_ershou():
                        'follows': arry2[0][:-3],
                        'visit_times': arry2[1][1:-3],
                        'pub_date': arry2[2],
-                       'district': district,
+                       'district': k,
                        'remarks': ''
                        }
                 __dbProvider.add_ershou(dic)

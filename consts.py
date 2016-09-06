@@ -19,8 +19,8 @@ const.ENCODE_FORM = 'UTF-8'
 const.HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 '
                                    '(KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
 
-const.DISTRICTS = {['luohu', 'lh'], 'futian', 'nanshan', 'yantian', 'baoan', 'longgang', 'longhuaxinqu', 'guangmingxinqu',
-                  'pingshanxinqu', 'dapengxinqu'}
+const.DISTRICTS = {'lh':'luohu', 'ft':'futian', 'ns':'nanshan', 'yt':'yantian', 'ba':'baoan', 'lg':'longgang',
+                   'lhxq':'longhuaxinqu', 'gmxq':'guangmingxinqu','psxq':'pingshanxinqu', 'dpxq':'dapengxinqu'}
 const.ERSHOU = 'ershoufang/'
 const.URL_ERSHOU = 'http://sz.lianjia.com/ershoufang/'
 const.TB_ERSHOU = 'TB_ERSHOU'
