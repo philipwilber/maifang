@@ -1,2 +1,0 @@
-
-def Property(object):
