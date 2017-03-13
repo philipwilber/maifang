@@ -12,7 +12,7 @@ __dbProvider = DBProvider()
 def get_tree(url):
     # req = urllib.request.Request(url=url, headers=const.HEADER)
     # page = urllib.request.urlopen(req).read().decode(const.ENCODE_FORM)
-    page = requests.get(url, headers=const.HEADER)
+    page = requests.get(url, headers=const.HEADER, proxies=const.PROXIES)
     page.encoding = const.ENCODE_FORM
     tree = etree.HTML(page.text)
     return tree

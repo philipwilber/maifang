@@ -18,6 +18,7 @@ const = _const()
 const.ENCODE_FORM = 'UTF-8'
 const.HEADER = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 '
                                    '(KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
+const.PROXIES = {"http": "http://10.10.1.10:3128", "https": "http://10.10.1.10:1080"}
 
 const.DISTRICTS = {'lh':'luohu', 'ft':'futian', 'ns':'nanshan', 'yt':'yantian', 'ba':'baoan', 'lg':'longgang',
                    'lhxq':'longhuaxinqu', 'gmxq':'guangmingxinqu','psxq':'pingshanxinqu', 'dpxq':'dapengxinqu'}
