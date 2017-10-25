@@ -1,4 +1,5 @@
 import re, requests, random
+import json
 
 header = {
     'headers': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
@@ -7,8 +8,10 @@ header = {
 class GatherProxy(object):
     '''To get proxy from http://gatherproxy.com/'''
     url = 'http://gatherproxy.com/proxylist'
-    pre1 = re.compile(r'<tr.*?>(?:.|\n)*?</tr>')
-    pre2 = re.compile(r"(?<=\(\').+?(?=\'\))")
+    # update regular expression rule
+    # pre1 = re.compile(r'<tr.*?>(?:.|\n)*?</tr>')
+    # pre2 = re.compile(r"(?<=\(\').+?(?=\'\))")
+    pre = re.compile(r'(?<=insertPrx\().+?(?=\)\;)')
 
     def getelite(self, pages=1, uptime=70, fast=True):
         '''Get Elite Anomy proxy
@@ -20,15 +23,23 @@ class GatherProxy(object):
         for i in range(1, pages + 1):
             params = {"Type": "elite", "PageIdx": str(i), "Uptime": str(uptime)}
             r = requests.post(self.url + "/anonymity/?t=Elite", params=params, headers=header)
-            for td in self.pre1.findall(r.text):
-                if fast and 'center fast' not in td:
-                    continue
-                try:
-                    tmp = self.pre2.findall(str(td))
-                    if (len(tmp) == 2):
-                        proxies.add(tmp[0] + ":" + str(int('0x' + tmp[1], 16)))
-                except:
-                    pass
+            for item in self.pre.findall(r.text):
+                data = json.loads(item)
+                if int(data['PROXY_TIME']) <= 150:
+                    try:
+                        proxies.add(data['PROXY_IP'] + ':' + str(int('0x' + data['PROXY_PORT'], 16)))
+                    except:
+                        pass
+
+            # for td in self.pre1.findall(r.text):
+            #     if fast and 'center fast' not in td:
+            #         continue
+            #     try:
+            #         tmp = self.pre2.findall(str(td))
+            #         if (len(tmp) == 2):
+            #             proxies.add(tmp[0] + ":" + str(int('0x' + tmp[1], 16)))
+            #     except:
+            #         pass
         return proxies
 
 
@@ -76,9 +87,6 @@ class ProxyPool(object):
 
 
 if __name__ == '__main__':
-    # test = ProxyCollection()
-    # for e in test.freeProxyFifth():
-    #     print(e)
-    pro = GatherProxy()
-    pool = pro.getelite()
+    pro = ProxyPool()
+    pool = pro.getproxy()
     print(pool)
